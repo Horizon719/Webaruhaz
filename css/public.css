@@ -3,6 +3,19 @@ body{
     margin: auto;
 }
 
+nav{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+nav>div>a{
+    text-decoration: none;
+    color: black;
+    font-size: large;
+}
+
 div{
     text-align: center;
 }
