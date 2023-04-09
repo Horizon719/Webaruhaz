@@ -20,6 +20,13 @@ div{
     text-align: center;
 }
 
+#kosar{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+
 #nagykep{
     display: flex;
     flex-direction: row;

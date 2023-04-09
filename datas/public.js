@@ -72,3 +72,7 @@ export const OBJECTS =  [
         eleres: "../kepek/laptop.jpg",
     },
 ]
+
+export const KOSARELEMEI =  [
+
+]
