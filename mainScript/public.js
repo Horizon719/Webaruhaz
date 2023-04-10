@@ -41,26 +41,7 @@ $(function(){
                     });
     });
 
-    const KOSAR = $("#kosargomb");
-    KOSAR.on("click", function () {
-        let megj = `<div class="container mt-3 row">`;
-        for (let i = 0; i < KOSARELEMEI.length; i++) {
-            megj += `<div class="card col-sm-3">`;
-            megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}</div>`;
-            megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
-            megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF</div>`;
-            megj += `</div>`;
-        }
-        megj += "</div>";
-        ARTICLE.eq(0).html(megj);
-        const KOSARSECTION = $("#kosar");
-        KOSARSECTION.eq(0).html(`<button class="vissza">VISSZA</button>`);
-    });
-    
-    const VISSZA = $(".vissza");
-    VISSZA.on("click", function () {
-        ARTICLE.eq(0).html(feltolt(OBJECTS));
-    });
+    kosar(ARTICLE);
 })
 
 function feltolt(OBJECTS){
@@ -97,4 +78,33 @@ function leptetes(ertek, currentIndex){
       currentIndex = OBJECTS.length - 1;
     }
     return currentIndex;
+}
+
+function vissza(ARTICLE){
+    const KOSARSECTION = $("#kosar");
+    KOSARSECTION.eq(0).html(`<button class="vissza">VISSZA</button>`);
+    const VISSZA = $(" .vissza");
+    VISSZA.on("click", function () {
+        ARTICLE.eq(0).html(feltolt(OBJECTS));
+        kosar(ARTICLE);
+    });
+}
+
+function kosar(ARTICLE){
+    const KOSARSECTION = $("#kosar");
+    KOSARSECTION.eq(0).html(`<button id="kosargomb">KOSÁR</button>`);
+    const KOSAR = $("#kosargomb");
+    KOSAR.on("click", function () {
+        let megj = `<div class="container mt-3 row">`;
+        for (let i = 0; i < KOSARELEMEI.length; i++) {
+            megj += `<div class="card col-sm-3">`;
+            megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}</div>`;
+            megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
+            megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF</div>`;
+            megj += `</div>`;
+        }
+        megj += "</div>";
+        ARTICLE.eq(0).html(megj);
+        vissza(ARTICLE);
+    });
 }
