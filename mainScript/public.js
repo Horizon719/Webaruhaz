@@ -4,43 +4,16 @@ import {
 } from "/datas/public.js";
 
 $(function(){
-    let currentIndex;
+    
     kever(OBJECTS);
     const ARTICLE = $("article");
     ARTICLE.eq(0).html(``);
     let txt = feltolt(OBJECTS);
     ARTICLE.eq(0).html(txt);
 
-    $(".show").on("click", function (event){
-        currentIndex = parseInt($(event.target).attr("id"));
-        ARTICLE.eq(0).html(`<div id="nagykep"><button id="elozo">Előző termék</button>
-                            <div class="nagykep"><img src="${OBJECTS[currentIndex].eleres}" alt=""></div>
-                            <button id="kovetkezo">Következő termék</button></div>`);
-        
-        const NAGYKEP = $(".nagykep img").eq(0);
-        const ELOZO = $("#elozo").eq(0);
-        ELOZO.on("click", function () {
-            currentIndex = leptetes(-1, currentIndex);
-            NAGYKEP.attr("src", OBJECTS[currentIndex].eleres);
-        });
-        const KOVETKEZO = $("#kovetkezo").eq(0);
-        KOVETKEZO.on("click", function () {
-            currentIndex = leptetes(+1, currentIndex);
-            NAGYKEP.attr("src", OBJECTS[currentIndex].eleres);
-        });
-    });
-    
-
-    $(".kosar").on("click", function (event){
-        let melyik = parseInt($(event.target).attr("id"));
-        KOSARELEMEI.push({
-                        nev: `${OBJECTS[melyik].nev}`, 
-                        kategoria: `${OBJECTS[melyik].kategoria}`,
-                        ar: `${OBJECTS[melyik].ar}`,
-                        eleres: `${OBJECTS[melyik].eleres}`,
-                    });
-    });
-
+    mutat(ARTICLE);
+    vissza(ARTICLE);
+    kosarba();
     kosar(ARTICLE);
 })
 
@@ -80,31 +53,80 @@ function leptetes(ertek, currentIndex){
     return currentIndex;
 }
 
-function vissza(ARTICLE){
-    const KOSARSECTION = $("#kosar");
-    KOSARSECTION.eq(0).html(`<button class="vissza">VISSZA</button>`);
-    const VISSZA = $(" .vissza");
-    VISSZA.on("click", function () {
-        ARTICLE.eq(0).html(feltolt(OBJECTS));
-        kosar(ARTICLE);
-    });
-}
-
 function kosar(ARTICLE){
     const KOSARSECTION = $("#kosar");
     KOSARSECTION.eq(0).html(`<button id="kosargomb">KOSÁR</button>`);
     const KOSAR = $("#kosargomb");
     KOSAR.on("click", function () {
         let megj = `<div class="container mt-3 row">`;
+        let vegosszeg = 0;
         for (let i = 0; i < KOSARELEMEI.length; i++) {
             megj += `<div class="card col-sm-3">`;
             megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}</div>`;
             megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
             megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF</div>`;
             megj += `</div>`;
+            let szam = parseInt(`${KOSARELEMEI[i].ar}`);
+            vegosszeg += szam;
         }
         megj += "</div>";
+        megj += `<div id="vegosszeg"><h3>Végösszeg: </h3>${vegosszeg} HUF</div>`;
         ARTICLE.eq(0).html(megj);
         vissza(ARTICLE);
+    });
+}
+
+function vissza(ARTICLE){
+    const KOSARSECTION = $("#kosar");
+    KOSARSECTION.eq(0).html(`<button class="vissza">VISSZA</button>`);
+    const VISSZA = $(".vissza");
+    VISSZA.on("click", function () {
+        ARTICLE.eq(0).html(feltolt(OBJECTS));
+        kosar(ARTICLE);
+        kosarba();
+        mutat(ARTICLE);
+    });
+}
+
+function kosarba(){
+    $(".kosar").on("click", function (event){
+        let melyik = parseInt($(event.target).attr("id"));
+        KOSARELEMEI.push({
+                        nev: `${OBJECTS[melyik].nev}`, 
+                        kategoria: `${OBJECTS[melyik].kategoria}`,
+                        ar: `${OBJECTS[melyik].ar}`,
+                        eleres: `${OBJECTS[melyik].eleres}`,
+                    });
+    });
+}
+
+function mutat(ARTICLE){
+    let currentIndex;
+    $(".show").on("click", function (event){
+        currentIndex = parseInt($(event.target).attr("id"));
+        ARTICLE.eq(0).html(`<div id="nagykep"><button id="elozo">Előző termék</button>
+                            <div class="nagykep"><img src="${OBJECTS[currentIndex].eleres}" alt=""></div>
+                            <button id="kovetkezo">Következő termék</button></div><br>
+                            <button class="vissza">VISSZA</button>`);
+        
+        
+        const NAGYKEP = $(".nagykep img").eq(0);
+        const ELOZO = $("#elozo").eq(0);
+        ELOZO.on("click", function () {
+            currentIndex = leptetes(-1, currentIndex);
+            NAGYKEP.attr("src", OBJECTS[currentIndex].eleres);
+        });
+        const KOVETKEZO = $("#kovetkezo").eq(0);
+        KOVETKEZO.on("click", function () {
+            currentIndex = leptetes(+1, currentIndex);
+            NAGYKEP.attr("src", OBJECTS[currentIndex].eleres);
+        });
+
+        $(".vissza").on("click", function () {
+            ARTICLE.eq(0).html(feltolt(OBJECTS));
+            kosar(ARTICLE);
+            kosarba();
+            mutat(ARTICLE);
+          });
     });
 }
