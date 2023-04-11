@@ -1,7 +1,7 @@
 import { 
     OBJECTS,
     KOSARELEMEI,
-} from "../datas/public.js";
+} from "/datas/public.js";
 
 $(function(){
     let currentIndex;
