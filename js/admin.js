@@ -10,11 +10,17 @@ let priceDiff;
 let notNeededKeys = ["eleres"];
 let currentOrder = "ASC";
 let orderKey;
+let sortParams = {
+    nev: "",
+    ar: [0, 750000],
+    kategoria: "",
+}
 
 function main() {
     rangeLisener();
-    listItems();
+    listItems(OBJECTS);
     addItemButtonLisener();
+    searchLisener();
 }
 
 
@@ -118,13 +124,17 @@ function changeMaxForPriceRange(RANGE_DOTS) {
     PROGRESS_BAR.css("left", 0);
     PROGRESS_BAR.css("right", 0);
 
+    sortParams.ar[1] = MAX_PRICE;
 }
-function listItems() {
+function listItems(list) {
+    if (list == null) {
+        list = OBJECTS;
+    }
     const DIV = $("#datas");
 
-    DIV.html(getTableWithItems(OBJECTS));
+    DIV.html(getTableWithItems(list));
     deleteButtonLisener();
-    sortKeyLisener();
+    sortKeyLisener(list);
 
 }
 
@@ -147,6 +157,8 @@ function getTableWithItems(products) {
     let headers = getHeaderTitles(products);
     let i = 0;
     
+    products = sortItems(products);
+
     orderByKey(products);
 
     for (const key of headers) {
@@ -199,7 +211,6 @@ function orderByKey(products) {
         }
     }
 
-    return products;
 
     /* return ordered.sort((a, b) => {
         let ret;
@@ -211,6 +222,80 @@ function orderByKey(products) {
         //console.log(ret);
         return ret;
     }); */
+}
+
+function sortItems(list) {
+    let i = 0;
+
+    for (let searchTypes in sortParams) {
+        let searchParam = sortParams[searchTypes];
+        
+        if (String(searchParam) == "" || String(searchParam) == null) { 
+            i++;
+        }
+    }
+
+    if (i == Object.keys(sortParams).length-1) {
+        return list;
+    }
+
+    let newList = [];
+
+    for (let item of list) {
+        for (let key in item) {
+            for (let searchTypes in sortParams) {
+                console.log(searchTypes);
+                if (String(searchTypes) == "ar") {
+                    let searchParam = sortParams[searchTypes];
+                    console.log("a");
+
+                    if (searchParam.length == 0) {
+                        continue;
+                    }
+                    console.log("aa", searchParam);
+                    if ( searchParam[0] >= item.ar && searchParam[1] <= item.ar) {
+                        if (!newList.includes(item)) {
+                            newList.push(item);
+                        }
+
+                    }
+
+                } else {
+                    let searchParam = sortParams[searchTypes];
+
+                    if (String(searchParam) == "" || String(searchParam) == null) {
+                        continue;
+                    }
+
+                    if (String(item[key]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
+                        if (!newList.includes(item)) {
+                            newList.push(item);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    //Mindenhol keres
+/*     for (let item of list) {
+        for (let searchTypes in sortParams) {
+            let searchParam = sortParams[searchTypes];
+
+            if (String(searchParam) == "" || String(searchParam) == null || searchParam.length == 0) {
+                continue;
+            }
+
+            if (String(item[searchTypes]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
+                if (!newList.includes(item)) {
+                    newList.push(item);
+                }
+
+            }
+        }
+    } */
+
+    return newList;
 }
 
 function getHeaderTitles(products) {
@@ -234,14 +319,18 @@ function removeItem(list, index) {
 }
 
 function addItem(list) {
-    const ITEM_NAME = $("#newItemName");
-    const ITEM_CATEGORY = $("#newItemCategory");
-    const ITEM_PRICE = $("#newItemPrice");
+    const ITEM_NAME = $("#newItemName").val();
+    const ITEM_CATEGORY = $("#newItemCategory").val();
+    const ITEM_PRICE = $("#newItemPrice").val();
+
+    if (ITEM_NAME == "" || ITEM_CATEGORY == "" || ITEM_PRICE == null) {
+        return;
+    }
 
     list.push({
-        nev: ITEM_NAME.val(), 
-        kategoria: ITEM_CATEGORY.val(),
-        ar: ITEM_PRICE.val(),
+        nev: ITEM_NAME, 
+        kategoria: ITEM_CATEGORY,
+        ar: ITEM_PRICE,
         eleres: null,
     }); 
     console.log(list);
@@ -272,7 +361,7 @@ function deleteButtonLisener() {
     })
 }
 
-function sortKeyLisener() {
+function sortKeyLisener(list) {
     const KEYS = $("article #datas th");
 
     KEYS.on("click", (event) => {
@@ -288,6 +377,34 @@ function sortKeyLisener() {
         }
 
         KEYS.off("click");
+        listItems(list);
+    });
+}
+
+function searchLisener() {
+    const SEARCH_INPUT = $("#search");
+    const CATEGORY_INPUT = $("#kat")
+    const PRICE_INPUT = $(".priceSelectorRange");
+
+    SEARCH_INPUT.on("input", (event) => {
+        sortParams.nev = SEARCH_INPUT.val();
         listItems();
     });
+
+    CATEGORY_INPUT.on("input", (event) => {
+        sortParams.kategoria = CATEGORY_INPUT.val();
+        listItems();
+    });
+
+    PRICE_INPUT.on("input", (event) => {
+
+        if (event.target.id == "priceMin") {
+            sortParams.ar[0] = parseInt(event.target.value);
+        } else {
+            sortParams.ar[1] = parseInt(event.target.value);
+        }
+        console.log(sortParams.ar);
+        listItems();
+    })
+
 }
