@@ -7,17 +7,51 @@
         <title>WebShop</title>
 
         <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" crossorigin="anonymous"></script>
-        <script src="../mainScript/admin.js"></script>
-        <script src="../datas/admin.js"></script>
+        <script src="js/admin.js" type="module"></script>
+
+        <link rel="stylesheet" href="css/admin.css">
     </head>
     <body>
         <main>
-            <header><h1>Számítógépes webshop</h1></header>
+            <header><h1>Számítógépes webshop - Admin</h1></header>
             <nav>
-                <div><a href="public.html">WebShop</a></div>
+                <div><a href="index.html">WebShop</a></div>
                 <div><a href="admin.html">Admin felület</a></div>
             </nav>
-            <article></article>
+            <article>
+                <div id="filters">
+                    <div>
+                        <input type="text" id="search" placeholder="Keresés...">
+                    </div>
+                    <div>
+                        <div id="manualPriceDiv">
+                            <input type="number" id="priceMinNum" value="0" min="0" max="10000">
+                            Ár szűrés
+                            <input type="number" id="priceMaxNum" value="0" min="0" max="10000">
+                        </div>
+                        <div id="rangeDiv">
+                            <div id="sliderBg">
+                                <div id="sliderFill"></div>
+                            </div>
+                            <input type="range" min="0" max="10000" value="0" id="priceMin" class="priceSelectorRange">
+                            <input type="range" min="0" max="10000" value="0" id="priceMax" class="priceSelectorRange">
+                        </div>
+                    </div>
+                    <div>
+                        <input type="text" id="kat" placeholder="Kategória...">
+                    </div>
+                    <div>
+                        <button id="addItemButton">Új termék</button>
+                    </div>
+                </div>
+                <div id="addItemSection">
+                    <form>
+                        <label for="">Név:</label>
+                        <input type="text" id="newItem">
+                    </form>
+                </div>
+                <div id="datas"></div>
+            </article>
             <footer>Péti Dominik</footer>
         </main>
     </body>
