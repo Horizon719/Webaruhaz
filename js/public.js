@@ -20,7 +20,7 @@ $(function(){
 function feltolt(OBJECTS){
     let text = `<div class="container mt-3 row">`;
     for (let i = 0; i < OBJECTS.length; i++) {
-        text += `<div class="card col-sm-3">`;
+        text += `<div class="card col-lg-3 col-md-4 col-sm-6 p-0">`;
         text += `<div class="card-header"><h4>${OBJECTS[i].nev}</h4><br>-${OBJECTS[i].kategoria}</div>`;
         text += `<div class="card-body"><img src="${OBJECTS[i].eleres}" alt="${OBJECTS[i].kategoria}"></div> `;
         text += `<div class="card-footer">${OBJECTS[i].ar} HUF<br><button class="show" id="${i}">Mutat</button>

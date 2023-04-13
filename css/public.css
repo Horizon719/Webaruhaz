@@ -1,6 +1,15 @@
+*{
+    box-sizing: border-box;
+}
+
+html{
+    background-color: #146C94;
+}
+
 body{
     width: 80%;
     margin: auto;
+    background-color: #146C94;
 }
 
 nav{
@@ -18,6 +27,14 @@ nav>div>a{
 
 div{
     text-align: center;
+}
+
+.card-header{
+    height: 150px;
+}
+
+.card-header, .card-footer{
+    color: #ffffff;
 }
 
 #kosar{
@@ -40,6 +57,12 @@ div{
     width: 20%;   
 }
 
+.show, .kosar{
+    background-color: #0087c5;
+    color: #F6F1F1;
+    border: 2px solid black;
+    border-radius: 8px;
+}
 
 img{
     width: 100%;
