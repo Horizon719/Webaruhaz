@@ -14,6 +14,7 @@ let orderKey;
 function main() {
     rangeLisener();
     listItems();
+    addItemButtonLisener();
 }
 
 
@@ -47,7 +48,7 @@ function rangeLisener() {
         let min = event.target.value;
         let max = MAX_NUM_INPUT.attr("value");
 
-        console.log("asd",min, event.target.max);
+        //console.log("asd",min, event.target.max);
         if (min > max) {
             event.target.value = min;
             return;
@@ -63,7 +64,7 @@ function rangeLisener() {
         let min = MIN_NUM_INPUT.attr("value");
         let max = event.target.value;
 
-        console.log("asd",max, event.target.max);
+        //console.log("asd",max, event.target.max);
         if (min > max) {
             event.target.value = min;
             return;
@@ -81,7 +82,7 @@ function updateSliderValues(min, max) {
     const RANGE_MAX = $("#priceMax");
     const PROGRESS_BAR = $("#sliderFill");
 
-    console.log(min, max);
+    //console.log(min, max);
     RANGE_MIN.attr("value", min);
     RANGE_MAX.attr("value", max);
 
@@ -146,7 +147,7 @@ function getTableWithItems(products) {
     let headers = getHeaderTitles(products);
     let i = 0;
     
-    products = orderByKey(products);
+    orderByKey(products);
 
     for (const key of headers) {
         code += `<th id="${key}">${key}</th>`;
@@ -179,9 +180,8 @@ function getTableWithItems(products) {
 
 function orderByKey(products) {
     if (!orderKey) {
-        return products; 
+        return; 
     }
-    let ordered = products;
     let orderOperator = currentOrder === "ASC" ? ">" : "<";
 
     for(let i = 0; i < products.length-1; i++) {
@@ -199,7 +199,7 @@ function orderByKey(products) {
         }
     }
 
-    return ordered;
+    return products;
 
     /* return ordered.sort((a, b) => {
         let ret;
@@ -208,7 +208,7 @@ function orderByKey(products) {
         } else {
             ret = a[orderKey] < b[orderKey];
         }
-        console.log(ret);
+        //console.log(ret);
         return ret;
     }); */
 }
@@ -224,12 +224,39 @@ function getHeaderTitles(products) {
             }
         }
     }
-    console.log(headers);
+    //console.log(headers);
     return headers;
 }
 
 function removeItem(list, index) {
     list.splice(index, 1);
+    console.log(list);
+}
+
+function addItem(list) {
+    const ITEM_NAME = $("#newItemName");
+    const ITEM_CATEGORY = $("#newItemCategory");
+    const ITEM_PRICE = $("#newItemPrice");
+
+    list.push({
+        nev: ITEM_NAME.val(), 
+        kategoria: ITEM_CATEGORY.val(),
+        ar: ITEM_PRICE.val(),
+        eleres: null,
+    }); 
+    console.log(list);
+}
+
+function addItemButtonLisener() {
+    const BUTTON = $("#newItemEnter");
+    
+    BUTTON.on("click", (event) => {
+        console.log("asd");
+        event.preventDefault();
+        addItem(OBJECTS);
+        listItems();
+
+    });
 }
 
 function deleteButtonLisener() {
@@ -238,7 +265,7 @@ function deleteButtonLisener() {
     BUTTONS.on("click", (event) => {
         let id = (event.target.id).split("-")[1];
         removeItem(OBJECTS, id);
-        console.log(OBJECTS);
+        //console.log(OBJECTS);
         listItems();
 
         BUTTONS.off("click");

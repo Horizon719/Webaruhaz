@@ -45,10 +45,15 @@
                     </div>
                 </div>
                 <div id="addItemSection">
-                    <form>
-                        <label for="">Név:</label>
-                        <input type="text" id="newItem">
-                    </form>
+
+                        <label for="newItem">Név:</label>
+                        <input type="text" id="newItemName">
+                        <label for="newItemCategory">Kategória:</label>
+                        <input type="text" id="newItemCategory">
+                        <label for="newItemPrice">Ár:</label>
+                        <input type="number" id="newItemPrice" min="0">   
+                        <button id="newItemEnter">Felvitel</button>
+
                 </div>
                 <div id="datas"></div>
             </article>
