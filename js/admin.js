@@ -54,7 +54,6 @@ function rangeLisener() {
         let min = event.target.value;
         let max = MAX_NUM_INPUT.attr("value");
 
-        //console.log("asd",min, event.target.max);
         if (min > max) {
             event.target.value = min;
             return;
@@ -70,7 +69,6 @@ function rangeLisener() {
         let min = MIN_NUM_INPUT.attr("value");
         let max = event.target.value;
 
-        //console.log("asd",max, event.target.max);
         if (min > max) {
             event.target.value = min;
             return;
@@ -88,7 +86,6 @@ function updateSliderValues(min, max) {
     const RANGE_MAX = $("#priceMax");
     const PROGRESS_BAR = $("#sliderFill");
 
-    //console.log(min, max);
     RANGE_MIN.attr("value", min);
     RANGE_MAX.attr("value", max);
 
@@ -239,14 +236,18 @@ function sortItems(list) {
         return list;
     } */
 
-    let newList = [];
+    let newList;
+    let tempList = list;
+    for (let searchType in sortParams) {
+        newList = [];
+        for (let item of tempList) {
+            let searchParam = sortParams[searchType];
+            if (String(searchParam) == "" || String(searchParam) == null) {
+                newList.push(item);
+            } else {
 
-    for (let item of list) {
-        for (let key in item) {
-            for (let searchTypes in sortParams) {
-                
-                if (String(searchTypes) == "ar") {
-                    let searchParam = sortParams[searchTypes];
+                if (String(searchType) == "ar") {
+                    searchParam = sortParams[searchType];
 
                     if (searchParam.length == 0) {
                         continue;
@@ -258,12 +259,7 @@ function sortItems(list) {
                     }
 
                 } else {
-                    let searchParam = sortParams[searchTypes];
-
-                    if (String(searchParam) == "" || String(searchParam) == null) {
-                        continue;
-                    }
-                    if (String(item[key]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
+                    if (String(item[searchType]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
                         if (!newList.includes(item)) {
                             newList.push(item);
                         }
@@ -272,6 +268,8 @@ function sortItems(list) {
                 }
             }
         }
+
+        tempList = newList;
     }
     //Mindenhol keres
 /*     for (let item of list) {
@@ -305,13 +303,11 @@ function getHeaderTitles(products) {
             }
         }
     }
-    //console.log(headers);
     return headers;
 }
 
 function removeItem(list, index) {
     list.splice(index, 1);
-    console.log(list);
 }
 
 function addItem(list) {
@@ -328,15 +324,13 @@ function addItem(list) {
         kategoria: ITEM_CATEGORY,
         ar: ITEM_PRICE,
         eleres: null,
-    }); 
-    console.log(list);
+    });
 }
 
 function addItemButtonLisener() {
     const BUTTON = $("#newItemEnter");
     
     BUTTON.on("click", (event) => {
-        console.log("asd");
         event.preventDefault();
         addItem(OBJECTS);
         listItems();
@@ -350,7 +344,6 @@ function deleteButtonLisener() {
     BUTTONS.on("click", (event) => {
         let id = (event.target.id).split("-")[1];
         removeItem(OBJECTS, id);
-        //console.log(OBJECTS);
         listItems();
 
         BUTTONS.off("click");
@@ -399,7 +392,6 @@ function searchLisener() {
         } else {
             sortParams.ar[1] = parseInt(event.target.value);
         }
-        console.log(sortParams.ar);
         listItems();
     })
 
