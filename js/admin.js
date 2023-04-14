@@ -225,7 +225,7 @@ function orderByKey(products) {
 }
 
 function sortItems(list) {
-    let i = 0;
+    /* let i = 0;
 
     for (let searchTypes in sortParams) {
         let searchParam = sortParams[searchTypes];
@@ -237,27 +237,24 @@ function sortItems(list) {
 
     if (i == Object.keys(sortParams).length-1) {
         return list;
-    }
+    } */
 
     let newList = [];
 
     for (let item of list) {
         for (let key in item) {
             for (let searchTypes in sortParams) {
-                console.log(searchTypes);
+                
                 if (String(searchTypes) == "ar") {
                     let searchParam = sortParams[searchTypes];
-                    console.log("a");
 
                     if (searchParam.length == 0) {
                         continue;
                     }
-                    console.log("aa", searchParam);
-                    if ( searchParam[0] >= item.ar && searchParam[1] <= item.ar) {
+                    if ( searchParam[0] <= item.ar && searchParam[1] >= item.ar) {
                         if (!newList.includes(item)) {
                             newList.push(item);
                         }
-
                     }
 
                 } else {
@@ -266,7 +263,6 @@ function sortItems(list) {
                     if (String(searchParam) == "" || String(searchParam) == null) {
                         continue;
                     }
-
                     if (String(item[key]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
                         if (!newList.includes(item)) {
                             newList.push(item);
