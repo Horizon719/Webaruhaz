@@ -1,5 +1,6 @@
 *{
     box-sizing: border-box;
+    color: #ffffff;
 }
 
 html{
@@ -21,7 +22,7 @@ nav{
 
 nav>div>a{
     text-decoration: none;
-    color: black;
+    color: #ffffff;
     font-size: large;
 }
 
@@ -57,11 +58,18 @@ div{
     width: 20%;   
 }
 
-.show, .kosar{
+button{
     background-color: #0087c5;
     color: #F6F1F1;
     border: 2px solid black;
     border-radius: 8px;
+}
+
+.torles{
+    background-color: #0087c5;
+    color: red;
+    border: 2px solid black;
+    border-radius: 8px; 
 }
 
 img{
