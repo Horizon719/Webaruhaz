@@ -15,6 +15,9 @@ $(function(){
     vissza(ARTICLE);
     kosarba();
     kosar(ARTICLE);
+    
+
+    
 })
 
 function feltolt(OBJECTS){
@@ -58,21 +61,9 @@ function kosar(ARTICLE){
     KOSARSECTION.eq(0).html(`<button id="kosargomb">KOSÁR</button>`);
     const KOSAR = $("#kosargomb");
     KOSAR.on("click", function () {
-        let megj = `<div class="container mt-3 row">`;
-        let vegosszeg = 0;
-        for (let i = 0; i < KOSARELEMEI.length; i++) {
-            megj += `<div class="card col-sm-3">`;
-            megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}</div>`;
-            megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
-            megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF</div>`;
-            megj += `</div>`;
-            let szam = parseInt(`${KOSARELEMEI[i].ar}`);
-            vegosszeg += szam;
-        }
-        megj += "</div>";
-        megj += `<div id="vegosszeg"><h3>Végösszeg: </h3>${vegosszeg} HUF</div>`;
-        ARTICLE.eq(0).html(megj);
+        ARTICLE.eq(0).html(kosarmegjelenit());
         vissza(ARTICLE);
+        torles(ARTICLE);
     });
 }
 
@@ -129,4 +120,32 @@ function mutat(ARTICLE){
             mutat(ARTICLE);
           });
     });
+}
+
+function torles(ARTICLE){
+    $(".torles").on("click", function (event) {
+        $(".torles").off("click");
+        let id = parseInt(event.target.id.split("-")[1]);
+        KOSARELEMEI.splice(id, 1);
+        ARTICLE.eq(0).html(kosarmegjelenit());
+        torles(ARTICLE);
+    });
+}
+
+function kosarmegjelenit(){
+    let megj = `<div class="container mt-3 row">`;
+    let vegosszeg = 0;
+    for (let i = 0; i < KOSARELEMEI.length; i++) {
+        megj += `<div class="card col-lg-3 col-md-4 col-sm-6 p-0">`;
+        megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}</div>`;
+        megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
+        megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF&nbsp&nbsp&nbsp&nbsp
+                 <button class="torles" id="cartRemove-${i}">X</button></div>`;
+        megj += `</div>`;
+        let szam = parseInt(`${KOSARELEMEI[i].ar}`);
+        vegosszeg += szam;
+    }
+    megj += "</div>";
+    megj += `<div id="vegosszeg"><h3>Végösszeg: </h3>${vegosszeg} HUF</div>`;
+    return megj;
 }
