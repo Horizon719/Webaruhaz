@@ -3,6 +3,10 @@ import {
 } from "./datas.js";
 
 $(function(){
+    if ((!localStorage.getItem("products")) || (localStorage.getItem("products") == "[]") || (localStorage.getItem("products") == null)) {
+        localStorage.setItem("products", convertJSON(OBJECTS));
+    }
+
     main();
 })
 
@@ -18,7 +22,7 @@ let sortParams = {
 
 function main() {
     rangeLisener();
-    listItems(OBJECTS);
+    listItems(deconvertJSON(localStorage.getItem("products")));
     addItemButtonLisener();
     searchLisener();
 }
@@ -125,7 +129,7 @@ function changeMaxForPriceRange(RANGE_DOTS) {
 }
 function listItems(list) {
     if (list == null) {
-        list = OBJECTS;
+        list = deconvertJSON(localStorage.getItem("products"));
     }
     const DIV = $("#datas");
 
@@ -137,16 +141,17 @@ function listItems(list) {
 
 
 function getMaxPrice() {
-    return Math.max.apply(Math, OBJECTS.map( termek => {return termek.ar}));
+    return Math.max.apply(Math, deconvertJSON(localStorage.getItem("products")).map( termek => {return termek.ar}));
 }
 
 function getPriceAverage() {
     let sum = 0;
+    let list = deconvertJSON(localStorage.getItem("products"))
 
-    $.each(OBJECTS, function()  {
+    $.each(list, function()  {
         sum += this.ar;
     });
-    return parseInt(sum / OBJECTS.length);
+    return parseInt(sum / list.length);
 }
 
 function getTableWithItems(products) {
@@ -308,6 +313,7 @@ function getHeaderTitles(products) {
 
 function removeItem(list, index) {
     list.splice(index, 1);
+    localStorage.setItem("products", convertJSON(list));
 }
 
 function addItem(list) {
@@ -325,6 +331,8 @@ function addItem(list) {
         ar: ITEM_PRICE,
         eleres: null,
     });
+
+    localStorage.setItem("products", convertJSON(list));
 }
 
 function addItemButtonLisener() {
@@ -332,7 +340,7 @@ function addItemButtonLisener() {
     
     BUTTON.on("click", (event) => {
         event.preventDefault();
-        addItem(OBJECTS);
+        addItem(deconvertJSON(localStorage.getItem("products")));
         listItems();
 
     });
@@ -343,7 +351,7 @@ function deleteButtonLisener() {
     
     BUTTONS.on("click", (event) => {
         let id = (event.target.id).split("-")[1];
-        removeItem(OBJECTS, id);
+        removeItem(deconvertJSON(localStorage.getItem("products")), id);
         listItems();
 
         BUTTONS.off("click");
@@ -395,4 +403,13 @@ function searchLisener() {
         listItems();
     })
 
+}
+
+
+function convertJSON(list) {
+    return JSON.stringify(list);
+}
+
+function deconvertJSON(json) {
+    return JSON.parse(json);
 }
