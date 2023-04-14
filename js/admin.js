@@ -155,7 +155,7 @@ function getPriceAverage() {
 }
 
 function getTableWithItems(products) {
-    let code = "<table><tr>";
+    let code = `<table class="table table-hover"><tr>`;
     let headers = getHeaderTitles(products);
     let i = 0;
     

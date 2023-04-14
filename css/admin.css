@@ -10,6 +10,27 @@
     padding: 7.5px 2px;
 }
 
+#filters > div {
+    width: unset;
+}
+
+nav{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+nav>div {
+    text-align: center;
+}
+
+nav>div>a{
+    text-decoration: none;
+    color: #777;
+    font-size: large;
+}
+
 /* #filters > * {
     flex: 0 0 30%;
 } */
@@ -69,3 +90,8 @@ input[type="range"]::-webkit-slider-thumb {
     top: 0;
     left: 0
 } */
+
+main {
+    width: 70%;
+    margin: auto;
+}
