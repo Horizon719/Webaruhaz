@@ -8,7 +8,7 @@ $(function(){
     kever(OBJECTS);
     const ARTICLE = $("article");
     ARTICLE.eq(0).html(``);
-    let txt = feltolt(OBJECTS);
+    let txt = megjelenit(OBJECTS, "fooldal");
     ARTICLE.eq(0).html(txt);
 
     mutat(ARTICLE);
@@ -17,18 +17,35 @@ $(function(){
     kosar(ARTICLE);
 })
 
-function feltolt(OBJECTS){
-    let text = `<div class="container mt-3 row">`;
-    for (let i = 0; i < OBJECTS.length; i++) {
-        text += `<div class="card col-lg-3 col-md-4 col-sm-6 p-0">`;
-        text += `<div class="card-header"><h4>${OBJECTS[i].nev}</h4><br>-${OBJECTS[i].kategoria}</div>`;
-        text += `<div class="card-body"><img src="${OBJECTS[i].eleres}" alt="${OBJECTS[i].kategoria}"></div> `;
-        text += `<div class="card-footer">${OBJECTS[i].ar} HUF<br><button class="show" id="${i}">Mutat</button>
-                <button class="kosar" id="${i}">Kosárba</button></div>`;
-        text += `</div>`;
+function megjelenit(mit, hol){
+    let megj = `<div class="container mt-3 row">`;
+    let vegosszeg = 0;
+    for (let i = 0; i < mit.length; i++) {
+        megj += `<div class="card col-lg-3 col-md-4 col-sm-6 p-0">`;
+        megj += `<div class="card-header"><h4>${mit[i].nev}</h4><br>-${mit[i].kategoria}`;
+        if (hol == "kosar"){
+            megj +=`<br>${mit[i].db}db`;
+        }
+        megj += `</div><div class="card-body"><img src="${mit[i].eleres}" alt="${mit[i].kategoria}"></div> `;
+        if (hol == "fooldal"){
+            megj += `<div class="card-footer">${OBJECTS[i].ar} HUF<br><button class="show" id="${i}">Mutat</button>
+                     <button class="kosar" id="${i}">Kosárba</button></div>`;
+        } else if (hol == "kosar"){
+            megj += `<div class="card-footer">${mit[i].ar} HUF&nbsp&nbsp&nbsp&nbsp
+                    <button class="torles" id="cartRemove-${i}">X</button></div>`;
+        }
+        
+        megj += `</div>`;
+        if (hol == "kosar"){
+            let szam = parseInt(`${mit[i].ar}`)*parseInt(`${mit[i].db}`);
+            vegosszeg += szam;
+        }
     }
-    text += "</div>";
-    return text;
+    megj += "</div>";
+    if (hol == "kosar"){
+        megj += `<div id="vegosszeg"><h3>Végösszeg: </h3>${vegosszeg} HUF</div>`;
+    }
+    return megj;
 }
 
 function kever(OBJECTS){
@@ -58,7 +75,7 @@ function kosar(ARTICLE){
     KOSARSECTION.eq(0).html(`<button id="kosargomb">KOSÁR</button>`);
     const KOSAR = $("#kosargomb");
     KOSAR.on("click", function () {
-        ARTICLE.eq(0).html(kosarmegjelenit());
+        ARTICLE.eq(0).html(megjelenit(KOSARELEMEI, "kosar"));
         vissza(ARTICLE);
         torles(ARTICLE);
     });
@@ -69,7 +86,7 @@ function vissza(ARTICLE){
     KOSARSECTION.eq(0).html(`<button class="vissza">VISSZA</button>`);
     const VISSZA = $(".vissza");
     VISSZA.on("click", function () {
-        ARTICLE.eq(0).html(feltolt(OBJECTS));
+        ARTICLE.eq(0).html(megjelenit(OBJECTS, "fooldal"));
         kosar(ARTICLE);
         kosarba();
         mutat(ARTICLE);
@@ -117,7 +134,7 @@ function mutat(ARTICLE){
         });
 
         $(".vissza").on("click", function () {
-            ARTICLE.eq(0).html(feltolt(OBJECTS));
+            ARTICLE.eq(0).html(megjelenit(OBJECTS, "fooldal"));
             kosar(ARTICLE);
             kosarba();
             mutat(ARTICLE);
@@ -134,25 +151,7 @@ function torles(ARTICLE){
         } else{
             KOSARELEMEI.splice(id, 1);
         }
-        ARTICLE.eq(0).html(kosarmegjelenit());
+        ARTICLE.eq(0).html(megjelenit(KOSARELEMEI, "kosar"));
         torles(ARTICLE);
     });
-}
-
-function kosarmegjelenit(){
-    let megj = `<div class="container mt-3 row">`;
-    let vegosszeg = 0;
-    for (let i = 0; i < KOSARELEMEI.length; i++) {
-        megj += `<div class="card col-lg-3 col-md-4 col-sm-6 p-0">`;
-        megj += `<div class="card-header"><h4>${KOSARELEMEI[i].nev}</h4><br>-${KOSARELEMEI[i].kategoria}<br>${KOSARELEMEI[i].db}db</div>`;
-        megj += `<div class="card-body"><img src="${KOSARELEMEI[i].eleres}" alt="${KOSARELEMEI[i].kategoria}"></div> `;
-        megj += `<div class="card-footer">${KOSARELEMEI[i].ar} HUF&nbsp&nbsp&nbsp&nbsp
-                 <button class="torles" id="cartRemove-${i}">X</button></div>`;
-        megj += `</div>`;
-        let szam = parseInt(`${KOSARELEMEI[i].ar}`)*parseInt(`${KOSARELEMEI[i].db}`);
-        vegosszeg += szam;
-    }
-    megj += "</div>";
-    megj += `<div id="vegosszeg"><h3>Végösszeg: </h3>${vegosszeg} HUF</div>`;
-    return megj;
 }
