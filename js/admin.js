@@ -23,15 +23,24 @@ let sortParams = {
 function main() {
     rangeLisener();
     listItems(deconvertJSON(localStorage.getItem("products")));
-    addItemButtonLisener();
+    addNewItemButtonLisener();
     searchLisener();
+
+    $("#addItemButton").on("click", () => {
+        const NEW_ITEM_ADD = $("#addItemSection");
+
+        if (NEW_ITEM_ADD.css("display") == "block") {
+            NEW_ITEM_ADD.css("display", "none");
+        } else {
+            NEW_ITEM_ADD.css("display", "block");
+        }
+        
+    });
 }
 
 
 function rangeLisener() {
     const RANGE_DOTS = $(".priceSelectorRange");
-    const MIN_NUM_INPUT = $("#priceMinNum");
-    const MAX_NUM_INPUT = $("#priceMaxNum");
     
     changeMaxForPriceRange(RANGE_DOTS);
 
@@ -52,35 +61,6 @@ function rangeLisener() {
 
         updateSliderValues(min, max);
         updateInputNumValues(min, max);
-    });
-
-    MIN_NUM_INPUT.on("input", (event) => {
-        let min = event.target.value;
-        let max = MAX_NUM_INPUT.attr("value");
-
-        if (min > max) {
-            event.target.value = min;
-            return;
-        }else if (min < 0) {
-            event.target.value = 0;
-            return;
-        }
-
-        updateSliderValues(min, max);
-    });
-
-    MAX_NUM_INPUT.on("input", (event) => {
-        let min = MIN_NUM_INPUT.attr("value");
-        let max = event.target.value;
-
-        if (min > max) {
-            event.target.value = min;
-            return;
-        }else if (max < event.target.max) {
-            event.target.value = max;
-            return;
-        }
-        updateSliderValues(min, max);
     });
 
 }
@@ -157,8 +137,7 @@ function getPriceAverage() {
 function getTableWithItems(products) {
     let code = `<table class="table table-hover"><tr>`;
     let headers = getHeaderTitles(products);
-    let i = 0;
-    
+
     products = sortItems(products);
 
     orderByKey(products);
@@ -183,8 +162,8 @@ function getTableWithItems(products) {
             code += `<td>${data}</td>`;
         }
 
-        code += `<td><button id="Item-${i}">X</button></td></tr>`;
-        i++;
+        code += `<td><button id="Item-${row.id}">X</button></td></tr>`;
+
     }
 
 
@@ -199,12 +178,20 @@ function orderByKey(products) {
     let orderOperator = currentOrder === "ASC" ? ">" : "<";
 
     for(let i = 0; i < products.length-1; i++) {
-
         for(let j = i+1; j < products.length; j++) {
-            let condition = typeof(products[i][orderKey]) == "int" ?
-                            `${products[i][orderKey]} ${orderOperator} ${products[j][orderKey]}` :
-                            `"${products[i][orderKey]}" ${orderOperator} "${products[j][orderKey]}"`;
+            let conLeft = products[i][orderKey];
+            let conRight = products[j][orderKey];
+            if (conLeft == "" || conLeft == null) {
+                conLeft = 0;
+            }
+            if (conRight == "" || conRight == null) {
+                conRight = 0;
+            }
 
+            let condition = (typeof(conLeft) == "number") || (typeof(conLeft) == "int") ?
+                            `${conLeft} ${orderOperator} ${conRight}` :
+                            `"${conLeft}" ${orderOperator} "${conRight}"`;
+            console.log(condition);
             if (eval(condition)) {
                 let cs = products[i];
                 products[i] = products[j];
@@ -212,37 +199,12 @@ function orderByKey(products) {
             }
         }
     }
-
-
-    /* return ordered.sort((a, b) => {
-        let ret;
-        if (currentOrder === "ASC") {
-            ret = a[orderKey] > b[orderKey];
-        } else {
-            ret = a[orderKey] < b[orderKey];
-        }
-        //console.log(ret);
-        return ret;
-    }); */
 }
 
 function sortItems(list) {
-    /* let i = 0;
-
-    for (let searchTypes in sortParams) {
-        let searchParam = sortParams[searchTypes];
-        
-        if (String(searchParam) == "" || String(searchParam) == null) { 
-            i++;
-        }
-    }
-
-    if (i == Object.keys(sortParams).length-1) {
-        return list;
-    } */
-
     let newList;
     let tempList = list;
+
     for (let searchType in sortParams) {
         newList = [];
         for (let item of tempList) {
@@ -276,23 +238,6 @@ function sortItems(list) {
 
         tempList = newList;
     }
-    //Mindenhol keres
-/*     for (let item of list) {
-        for (let searchTypes in sortParams) {
-            let searchParam = sortParams[searchTypes];
-
-            if (String(searchParam) == "" || String(searchParam) == null || searchParam.length == 0) {
-                continue;
-            }
-
-            if (String(item[searchTypes]).toLowerCase().indexOf(String(searchParam).toLowerCase()) >= 0) {
-                if (!newList.includes(item)) {
-                    newList.push(item);
-                }
-
-            }
-        }
-    } */
 
     return newList;
 }
@@ -311,7 +256,11 @@ function getHeaderTitles(products) {
     return headers;
 }
 
-function removeItem(list, index) {
+function removeItem(list, id) {
+    let index = getItemIndexById(list, id);
+    if (index < 0) {
+        return;
+    }
     list.splice(index, 1);
     localStorage.setItem("products", convertJSON(list));
 }
@@ -326,6 +275,7 @@ function addItem(list) {
     }
 
     list.push({
+        id: findMaxId(list) + 1,
         nev: ITEM_NAME, 
         kategoria: ITEM_CATEGORY,
         ar: ITEM_PRICE,
@@ -335,7 +285,15 @@ function addItem(list) {
     localStorage.setItem("products", convertJSON(list));
 }
 
-function addItemButtonLisener() {
+function getItemIndexById(list, id) {
+    let i = 0;
+    while (i < list.length && list[i].id != id) {
+        i++;
+    }
+    return i < list.length ? i : -1;
+}
+
+function addNewItemButtonLisener() {
     const BUTTON = $("#newItemEnter");
     
     BUTTON.on("click", (event) => {
@@ -413,3 +371,15 @@ function convertJSON(list) {
 function deconvertJSON(json) {
     return JSON.parse(json);
 }
+
+
+function findMaxId(list) {
+    let max = 0;
+
+    for (let i = 1; i < list.length; i++) {
+        if (list[max].id < list[i].id) {
+            max = i;
+        }
+    }
+    return list[max].id;
+}   
