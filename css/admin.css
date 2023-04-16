@@ -52,7 +52,7 @@ nav>div>a{
 
 #addItemSection {
     width: 100%;
-    /* display: none; */
+    display: none;
     background-color: #dfdfdf;
     border-top: 2.5px solid black;
     padding: 10px;
